@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade Prática - Top Estampas | Prof. Daniella</title>
+  <style>
+    :root {
+      --primary-color: #004a8f; /* Azul Senac */
+      --secondary-color: #f68b20; /* Laranja Senac */
+      --bg-light: #f4f6f8;
+      --border-color: #cfd8dc;
+      --text-dark: #263238;
+      --success: #2e7d32;
+      --danger: #c62828;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+    
+    body { background-color: #e9ecef; color: var(--text-dark); line-height: 1.6; }
+    
+    .container { max-width: 900px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+    
+    /* Botão do Professor */
+    .admin-btn { position: absolute; top: 15px; right: 15px; background: #455a64; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+    .admin-btn:hover { background: #263238; }
+
+    /* Telas */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    h1, h2 { color: var(--primary-color); margin-bottom: 15px; }
+    h2 { font-size: 1.3rem; border-left: 4px solid var(--secondary-color); padding-left: 10px; margin-top: 25px; }
+    
+    /* Formulários e Inputs */
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; }
+    input[type="text"], select, input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+    
+    .btn { background: var(--secondary-color); color: #fff; border: none; padding: 12px 20px; font-size: 1.1rem; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+    .btn:hover { background: #e07b19; }
+    .btn-secondary { background: var(--primary-color); }
+    .btn-secondary:hover { background: #003366; }
+
+    /* Login / Entrada */
+    .login-box { max-width: 400px; margin: 0 auto; text-align: center; padding: 40px 0; }
+    .login-box h1 { margin-bottom: 5px; }
+    .login-box p { margin-bottom: 25px; color: #666; }
+
+    /* Transações */
+    .transaction-list { list-style: none; margin-bottom: 20px; }
+    .transaction-list li { background: var(--bg-light); padding: 12px; margin-bottom: 8px; border-left: 4px solid var(--primary-color); border-radius: 4px; }
+    
+    /* Razonetes */
+    .razonetes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+    .t-account { border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; }
+    .t-header { background: var(--primary-color); color: white; text-align: center; padding: 10px; font-weight: bold; }
+    .t-labels { display: flex; justify-content: space-between; background: #e0e0e0; padding: 5px 15px; font-size: 0.85rem; font-weight: bold; border-bottom: 2px solid #333; }
+    .t-body { display: flex; }
+    .t-side { flex: 1; padding: 10px; }
+    .t-side.debit { border-right: 2px solid #333; }
+    .t-input-row { display: flex; align-items: center; margin-bottom: 5px; }
+    .t-input-row span { font-size: 0.8rem; color: #666; margin-right: 5px; width: 25px; }
+    .t-input-row input { padding: 5px; text-align: right; width: 100%; }
+    
+    .t-footer { background: #f9f9f9; padding: 10px; border-top: 2px solid #333; }
+    .calc-btn { width: 100%; background: #607d8b; color: white; border: none; padding: 6px; border-radius: 3px; cursor: pointer; font-size: 0.85rem; margin-bottom: 8px; }
+    .calc-btn:hover { background: #455a64; }
+    .final-saldo { display: flex; align-items: center; justify-content: space-between; font-weight: bold; }
+    .final-saldo input { width: 120px; font-weight: bold; color: var(--primary-color); }
+
+    /* Equação Fundamental */
+    .equacao-box { background: #e8f5e9; border: 2px solid var(--success); padding: 20px; border-radius: 8px; margin-top: 30px; text-align: center; }
+    .eq-inputs { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    .eq-item { text-align: center; }
+    .eq-item input { width: 120px; text-align: center; font-weight: bold; font-size: 1.1rem; }
+    .eq-sign { font-size: 1.5rem; font-weight: bold; margin: 0 10px; margin-top: 20px; }
+
+    /* Dashboard */
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: var(--primary-color); color: white; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .status-pendente { color: #f57c00; font-weight: bold; }
+    .status-correto { color: var(--success); font-weight: bold; }
+    .status-incorreto { color: var(--danger); font-weight: bold; }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Botão de Acesso ao Dashboard -->
+  <button class="admin-btn" onclick="acessarDashboard()">Área do Professor</button>
+
+  <!-- TELA 1: LOGIN (CONTROLE DE ENTRADA) -->
+  <div id="screen-login" class="screen active">
+    <div class="login-box">
+      <h1>Top Estampas</h1>
+      <p>Controle de Presença e Exercício Prático</p>
+      
+      <div class="form-group" style="text-align: left;">
+        <label for="aluno-nome">Nome Completo do Aluno:</label>
+        <input type="text" id="aluno-nome" placeholder="Ex: João da Silva" required>
+      </div>
+      
+      <div class="form-group" style="text-align: left;">
+        <label for="aluno-turma">Turma:</label>
+        <select id="aluno-turma">
+          <option value="">Selecione sua turma...</option>
+          <option value="2A">2º Ano A</option>
+          <option value="2B">2º Ano B</option>
+        </select>
+      </div>
+
+      <button class="btn" onclick="iniciarExercicio()">Registrar Presença e Iniciar</button>
+    </div>
+  </div>
+
+  <!-- TELA 2: EXERCÍCIO -->
+  <div id="screen-exercise" class="screen">
+    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #ccc; padding-bottom: 10px;">
+      <h1 style="margin: 0; font-size: 1.5rem;">Atividade: Top Estampas</h1>
+      <div style="text-align: right; font-size: 0.9rem; color: #666;">
+        Aluno(a): <strong id="display-nome"></strong><br>
+        Turma: <strong id="display-turma"></strong>
+      </div>
+    </div>
+
+    <h2>Fatos Contábeis do Mês</h2>
+    <ul class="transaction-list">
+      <li><strong>(1) Abertura:</strong> Investimento inicial de R$ 1.000,00 em dinheiro (Caixa e Capital Social).</li>
+      <li><strong>(2) Equipamento:</strong> Compra de máquina de estampar por R$ 300,00, paga à vista em dinheiro.</li>
+      <li><strong>(3) Matéria-Prima:</strong> Compra de tecidos/tintas por R$ 200,00, a prazo com Fornecedor.</li>
+      <li><strong>(4) Pagamento:</strong> Pagamento de R$ 100,00 da dívida com o fornecedor usando dinheiro do caixa.</li>
+    </ul>
+
+    <p><em>Instruções: Registre os valores nos débitos e créditos. Use o botão "Calcular Saldo" para ajudar nas contas e preencha o Saldo Final.</em></p>
+
+    <div class="razonetes-grid">
+      
+      <!-- Caixa -->
+      <div class="t-account">
+        <div class="t-header">Caixa (Ativo)</div>
+        <div class="t-labels"><span>DÉBITO (+)</span><span>CRÉDITO (-)</span></div>
+        <div class="t-body">
+          <div class="t-side debit">
+            <div class="t-input-row"><span>(1)</span><input type="number" class="cx-d"></div>
+            <div class="t-input-row"><span>( )</span><input type="number" class="cx-d"></div>
+          </div>
+          <div class="t-side credit">
+            <div class="t-input-row"><span>(2)</span><input type="number" class="cx-c"></div>
+            <div class="t-input-row"><span>(4)</span><input type="number" class="cx-c"></div>
+          </div>
+        </div>
+        <div class="t-footer">
+          <button class="calc-btn" onclick="calcularRazonete('cx', 'ativo')">Calcular Saldo (D - C)</button>
+          <div class="final-saldo">Saldo Final: R$ <input type="number" id="cx-saldo" readonly></div>
+        </div>
+      </div>
+
+      <!-- Capital Social -->
+      <div class="t-account">
+        <div class="t-header">Capital Social (PL)</div>
+        <div class="t-labels"><span>DÉBITO (-)</span><span>CRÉDITO (+)</span></div>
+        <div class="t-body">
+          <div class="t-side debit">
+            <div class="t-input-row"><span>( )</span><input type="number" class="cap-d"></div>
+          </div>
+          <div class="t-side credit">
+            <div class="t-input-row"><span>(1)</span><input type="number" class="cap-c"></div>
+          </div>
+        </div>
+        <div class="t-footer">
+          <button class="calc-btn" onclick="calcularRazonete('cap', 'passivo')">Calcular Saldo (C - D)</button>
+          <div class="final-saldo">Saldo Final: R$ <input type="number" id="cap-saldo" readonly></div>
+        </div>
+      </div>
+
+      <!-- Equipamentos e Estoques -->
+      <div class="t-account">
+        <div class="t-header">Equipamentos e Estoques (Ativo)</div>
+        <div class="t-labels"><span>DÉBITO (+)</span><span>CRÉDITO (-)</span></div>
+        <div class="t-body">
+          <div class="t-side debit">
+            <div class="t-input-row"><span>(2)</span><input type="number" class="eq-d"></div>
+            <div class="t-input-row"><span>(3)</span><input type="number" class="eq-d"></div>
+          </div>
+          <div class="t-side credit">
+            <div class="t-input-row"><span>( )</span><input type="number" class="eq-c"></div>
+            <div class="t-input-row"><span>( )</span><input type="number" class="eq-c"></div>
+          </div>
+        </div>
+        <div class="t-footer">
+          <button class="calc-btn" onclick="calcularRazonete('eq', 'ativo')">Calcular Saldo (D - C)</button>
+          <div class="final-saldo">Saldo Final: R$ <input type="number" id="eq-saldo" readonly></div>
+        </div>
+      </div>
+
+      <!-- Fornecedores -->
+      <div class="t-account">
+        <div class="t-header">Fornecedores (Passivo)</div>
+        <div class="t-labels"><span>DÉBITO (-)</span><span>CRÉDITO (+)</span></div>
+        <div class="t-body">
+          <div class="t-side debit">
+            <div class="t-input-row"><span>(4)</span><input type="number" class="forn-d"></div>
+          </div>
+          <div class="t-side credit">
+            <div class="t-input-row"><span>(3)</span><input type="number" class="forn-c"></div>
+          </div>
+        </div>
+        <div class="t-footer">
+          <button class="calc-btn" onclick="calcularRazonete('forn', 'passivo')">Calcular Saldo (C - D)</button>
+          <div class="final-saldo">Saldo Final: R$ <input type="number" id="forn-saldo" readonly></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="equacao-box">
+      <h2>Equação Fundamental do Patrimônio</h2>
+      <p>Com base nos saldos finais acima, preencha os totais da empresa:</p>
+      <div class="eq-inputs">
+        <div class="eq-item">
+          <label>Total do ATIVO</label>
+          <input type="number" id="eq-ativo" placeholder="R$">
+        </div>
+        <div class="eq-sign">=</div>
+        <div class="eq-item">
+          <label>Total do PASSIVO</label>
+          <input type="number" id="eq-passivo" placeholder="R$">
+        </div>
+        <div class="eq-sign">+</div>
+        <div class="eq-item">
+          <label>Total do PATRIMÔNIO LÍQUIDO</label>
+          <input type="number" id="eq-pl" placeholder="R$">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" style="margin-top: 30px;" onclick="verificarExercicio()">Entregar Exercício (Verificar Respostas)</button>
+  </div>
+
+  <!-- TELA 3: DASHBOARD DA PROFESSORA -->
+  <div id="screen-dashboard" class="screen">
+    <div class="dashboard-header">
+      <h1>Painel da Professora</h1>
+      <button class="btn-secondary" style="padding: 10px; border-radius: 4px; border:none; color:white; cursor:pointer;" onclick="voltarParaLogin()">Voltar ao Início</button>
+    </div>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <p>Acompanhamento de Presença e Notas da Turma.</p>
+      <button onclick="limparDados()" style="background:var(--danger); color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer;">Limpar Todos os Dados</button>
+    </div>
+
+    <table id="tabela-alunos">
+      <thead>
+        <tr>
+          <th>Nome do Aluno</th>
+          <th>Turma</th>
+          <th>Data/Hora de Entrada</th>
+          <th>Situação do Exercício</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-body">
+        <!-- Preenchido via JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  let currentStudentId = null;
+
+  // Função para Iniciar (Registra Presença)
+  function iniciarExercicio() {
+    const nome = document.getElementById('aluno-nome').value.trim();
+    const turma = document.getElementById('aluno-turma').value;
+
+    if (!nome || !turma) {
+      alert("Por favor, preencha o Nome e a Turma para registrar a presença.");
+      return;
+    }
+
+    // Criar registro do aluno
+    const registro = {
+      id: Date.now().toString(),
+      nome: nome,
+      turma: turma,
+      horaEntrada: new Date().toLocaleString('pt-BR'),
+      status: 'Pendente'
+    };
+
+    // Salvar no LocalStorage
+    let alunos = JSON.parse(localStorage.getItem('topEstampas_alunos')) || [];
+    alunos.push(registro);
+    localStorage.setItem('topEstampas_alunos', JSON.stringify(alunos));
+    
+    currentStudentId = registro.id;
+
+    // Atualizar UI
+    document.getElementById('display-nome').innerText = nome;
+    document.getElementById('display-turma').innerText = turma;
+
+    mudarTela('screen-exercise');
+  }
+
+  // Função para calcular saldo dentro do razonete
+  function calcularRazonete(prefix, tipo) {
+    const debitos = document.querySelectorAll(`.${prefix}-d`);
+    const creditos = document.querySelectorAll(`.${prefix}-c`);
+    
+    let somaD = 0;
+    let somaC = 0;
+
+    debitos.forEach(input => somaD += Number(input.value) || 0);
+    creditos.forEach(input => somaC += Number(input.value) || 0);
+
+    let saldo = 0;
+    if (tipo === 'ativo') {
+      saldo = somaD - somaC; // Natureza Devedora
+    } else {
+      saldo = somaC - somaD; // Natureza Credora
+    }
+
+    document.getElementById(`${prefix}-saldo`).value = saldo;
+  }
+
+  // Função para verificar se a resposta está certa
+  function verificarExercicio() {
+    if(!currentStudentId) return;
+
+    // Gabarito Esperado
+    // Caixa: D(1000) - C(300+100) = 600
+    // Capital: C(1000) = 1000
+    // Equip/Est: D(300+200) = 500
+    // Fornec: C(200) - D(100) = 100
+    // Eq: 1100 (Ativo) = 100 (Passivo) + 1000 (PL)
+
+    const cx = Number(document.getElementById('cx-saldo').value);
+    const cap = Number(document.getElementById('cap-saldo').value);
+    const eq = Number(document.getElementById('eq-saldo').value);
+    const forn = Number(document.getElementById('forn-saldo').value);
+
+    const ativo = Number(document.getElementById('eq-ativo').value);
+    const passivo = Number(document.getElementById('eq-passivo').value);
+    const pl = Number(document.getElementById('eq-pl').value);
+
+    let acertouRazonetes = (cx === 600 && cap === 1000 && eq === 500 && forn === 100);
+    let acertouEquacao = (ativo === 1100 && passivo === 100 && pl === 1000);
+
+    let statusFinal = 'Incorreto';
+    let mensagem = "";
+
+    if (acertouRazonetes && acertouEquacao) {
+      statusFinal = 'Correto';
+      mensagem = "Parabéns! Todos os razonetes e a Equação Fundamental estão corretos!";
+    } else if (acertouRazonetes && !acertouEquacao) {
+      mensagem = "Seus razonetes estão certos, mas a Equação Fundamental está incorreta. Lembre-se: Total Ativo = Total Passivo + PL.";
+    } else {
+      mensagem = "Existem erros nos cálculos dos seus razonetes. Verifique se lançou débito e crédito nos lugares certos e calcule os saldos novamente.";
+    }
+
+    // Atualiza status no banco local
+    let alunos = JSON.parse(localStorage.getItem('topEstampas_alunos')) || [];
+    let index = alunos.findIndex(a => a.id === currentStudentId);
+    if(index !== -1) {
+      alunos[index].status = statusFinal;
+      localStorage.setItem('topEstampas_alunos', JSON.stringify(alunos));
+    }
+
+    alert(mensagem);
+    if(statusFinal === 'Correto') {
+      document.body.scrollTop = 0; // Vai para o topo
+      document.documentElement.scrollTop = 0;
+    }
+  }
+
+  // Controle do Dashboard da Professora
+  function acessarDashboard() {
+    const senha = prompt("Digite a senha de acesso da professora:");
+    if (senha === "senac2026") {
+      carregarTabela();
+      mudarTela('screen-dashboard');
+    } else if (senha !== null) {
+      alert("Senha incorreta!");
+    }
+  }
+
+  function carregarTabela() {
+    const tbody = document.getElementById('tabela-body');
+    tbody.innerHTML = "";
+    
+    let alunos = JSON.parse(localStorage.getItem('topEstampas_alunos')) || [];
+    
+    if (alunos.length === 0) {
+      tbody.innerHTML = "<tr><td colspan='4' style='text-align:center'>Nenhum aluno registrado ainda.</td></tr>";
+      return;
+    }
+
+    // Organiza do mais recente para o mais antigo
+    alunos.reverse().forEach(aluno => {
+      let tr = document.createElement('tr');
+      let statusClass = aluno.status === 'Correto' ? 'status-correto' : (aluno.status === 'Incorreto' ? 'status-incorreto' : 'status-pendente');
+      
+      tr.innerHTML = `
+        <td>${aluno.nome}</td>
+        <td>${aluno.turma}</td>
+        <td>${aluno.horaEntrada}</td>
+        <td class="${statusClass}">${aluno.status}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function limparDados() {
+    if(confirm("Tem certeza que deseja apagar a lista de presença e notas de TODA A TURMA? Esta ação não pode ser desfeita.")) {
+      localStorage.removeItem('topEstampas_alunos');
+      carregarTabela();
+    }
+  }
+
+  function voltarParaLogin() {
+    currentStudentId = null;
+    document.getElementById('aluno-nome').value = '';
+    mudarTela('screen-login');
+  }
+
+  // Navegação de Telas
+  function mudarTela(idTela) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById(idTela).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
